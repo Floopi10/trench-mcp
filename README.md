@@ -22,6 +22,14 @@ AI agents can read contracts and posts, but they still struggle with one practic
 
 Requirements: Node.js 22+.
 
+Run directly from GitHub:
+
+```bash
+npx --yes github:Floopi10/trench-mcp
+```
+
+Or install locally:
+
 ```bash
 git clone https://github.com/Floopi10/trench-mcp.git
 cd trench-mcp
@@ -67,6 +75,8 @@ npm run inspect
 ```
 
 `npm run inspect` launches the official MCP Inspector against the stdio server.
+
+Verified build evidence is recorded in [`docs/VERIFICATION.txt`](docs/VERIFICATION.txt).
 
 ## Architecture
 

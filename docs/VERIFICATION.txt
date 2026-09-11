@@ -1,0 +1,41 @@
+TRENCH MCP 0.1.0 — verification ledger
+Observed: 2026-09-11
+
+COMMAND: npm run check
+EXIT: 0
+STDOUT (summary):
+# tests 4
+# pass 4
+# fail 0
+
+COMMAND: MCP client -> listTools over stdio
+EXIT: 0
+OBSERVED TOOLS:
+chain_health
+compare_exit_sizes
+explain_exit_signal
+inspect_token
+simulate_exit
+
+COMMAND: MCP client -> callTool(chain_health, {}) over stdio
+EXIT: 0
+STDOUT:
+{"ok":true,"chain":"Robinhood Chain","chainId":4663,"blockNumber":60280545,"rpcUrl":"https://rpc.mainnet.chain.robinhood.com","latencyMs":857,"observedAt":"2026-09-11T13:08:15.945Z"}
+
+COMMAND: npm pack --dry-run
+EXIT: 0
+OBSERVED PACKAGE:
+trench-mcp-0.1.0.tgz
+package size: 7.4 kB
+unpacked size: 20.7 kB
+total files: 10
+
+COMMAND: gh run watch 34602561339 --repo Floopi10/trench-mcp --exit-status
+EXIT: 0
+STDOUT:
+Run CI (34602561339) has already completed with 'success'
+
+BOUNDARIES:
+- No wallet connection, private key, signing, swap, custody, or autonomous trading.
+- Exit receive/impact values are constant-product pressure proxies, not executable venue quotes.
+- Live market data may lag or omit pools; exact execution must be verified at the venue.
