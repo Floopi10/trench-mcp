@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="TRENCH gives AI agents live Robinhood Chain market context through MCP." />
+  <meta property="og:title" content="TRENCH MCP — market context for AI agents" />
+  <meta property="og:description" content="Inspect liquidity, model exit pressure and explain the evidence. Never touch a wallet." />
+  <meta property="og:image" content="https://floopi10.github.io/trench-mcp/assets/trench-mascot.png" />
+  <title>TRENCH MCP</title>
+  <link rel="icon" href="assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav shell">
+    <a class="brand" href="#top" aria-label="TRENCH home"><span class="brand-mark">T/</span>TRENCH</a>
+    <nav aria-label="Main navigation">
+      <a href="#tools">Tools</a><a href="#model">Model</a><a href="#console">Console</a>
+      <a class="nav-cta" href="https://github.com/Floopi10/trench-mcp">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero shell" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="pulse"></span> MCP SERVER · ROBINHOOD CHAIN</p>
+        <h1>Give your agent<br /><em>market context.</em></h1>
+        <p class="lede">TRENCH inspects visible liquidity, models size-aware exit pressure and returns the evidence your AI needs to explain its answer.</p>
+        <div class="actions">
+          <button class="command" data-copy="npx --yes github:Floopi10/trench-mcp"><code>npx --yes github:Floopi10/trench-mcp</code><span>copy</span></button>
+          <a class="secondary" href="https://github.com/Floopi10/trench-mcp">Read the source ↗</a>
+        </div>
+        <p class="boundary">Read-only. No wallet. No signing. No fake certainty.</p>
+      </div>
+      <div class="radar" aria-label="Exit pressure radar visualization">
+        <div class="radar-grid"><i></i><i></i><i></i><i></i></div><div class="scan"></div>
+        <div class="ping ping-a"></div><div class="ping ping-b"></div>
+        <div class="mascot-wrap"><img src="assets/trench-mascot.png" alt="Trench, a pixel-art green axolotl holding a market scanner" /></div>
+        <div class="readout"><span>pressure state</span><strong>DEEP</strong><small>live model</small></div>
+      </div>
+    </section>
+
+    <section class="proof-strip" aria-label="Product facts"><div class="shell proof-grid">
+      <p><strong>05</strong><span>agent tools</span></p><p><strong>4663</strong><span>chain ID</span></p><p><strong>00</strong><span>wallet permissions</span></p><p><strong>&lt;8s</strong><span>network timeout</span></p>
+    </div></section>
+
+    <section class="section shell" id="tools">
+      <header class="section-head"><p class="eyebrow">TOOL SURFACE</p><h2>Small enough to trust.<br />Useful enough to call.</h2><p>Each tool has one job, strict inputs and structured output. The host agent gets data and limitations together.</p></header>
+      <div class="tools">
+        <article class="tool featured"><span class="tool-id">01 / PRIMARY</span><h3>simulate_exit</h3><p>Models a requested USD position against the strongest visible pool and returns a deterministic pressure grade.</p><code>{ token, sizeUsd }</code><b>DEEP · THIN · CRITICAL</b></article>
+        <article class="tool"><span class="tool-id">02</span><h3>inspect_token</h3><p>Reads price, liquidity, volume, activity and pool coverage.</p><code>{ token }</code></article>
+        <article class="tool"><span class="tool-id">03</span><h3>compare_exit_sizes</h3><p>Compares eight sizes without introducing observation drift.</p><code>{ token, sizesUsd[] }</code></article>
+        <article class="tool"><span class="tool-id">04</span><h3>chain_health</h3><p>Checks network identity, latest block and RPC latency.</p><code>{ }</code></article>
+        <article class="tool"><span class="tool-id">05</span><h3>explain_exit_signal</h3><p>Turns a grade into evidence, limits and exact next checks.</p><code>{ token, sizeUsd }</code></article>
+      </div>
+    </section>
+
+    <section class="model section" id="model"><div class="shell model-grid">
+      <div><p class="eyebrow">THE MODEL</p><h2>Pressure,<br />not prophecy.</h2><p>TRENCH estimates quote-side depth from the strongest observed pool, applies a transparent constant-product proxy, then grades the requested position against fixed walls.</p><a href="https://github.com/Floopi10/trench-mcp/blob/main/docs/MODEL.md">Inspect every assumption ↗</a></div>
+      <div class="equation"><span>quote_depth</span><strong>liquidity / 2</strong><span>receive</span><strong>depth × after_fee<br />──────────────<br />depth + after_fee</strong><span>impact</span><strong>1 − receive / after_fee</strong></div>
+    </div></section>
+
+    <section class="section shell" id="console">
+      <header class="section-head"><p class="eyebrow">LOCAL PRESSURE CONSOLE</p><h2>Move the size.<br />Watch the wall.</h2><p>This browser demo runs the same public pressure formula locally. The MCP tools add live pool and chain observations.</p></header>
+      <div class="console">
+        <div class="controls">
+          <label>Pool liquidity <output id="liqOut">$100,000</output><input id="liquidity" type="range" min="5000" max="1000000" step="5000" value="100000" /></label>
+          <label>Exit size <output id="sizeOut">$1,000</output><input id="size" type="range" min="100" max="100000" step="100" value="1000" /></label>
+        </div>
+        <div class="result"><div class="grade" id="grade">DEEP</div><div><span>modeled impact</span><strong id="impact">1.96%</strong></div><div><span>position / depth</span><strong id="ratio">2.00%</strong></div><p id="reason">Position stays below the configured depth wall.</p></div>
+      </div>
+    </section>
+
+    <section class="section shell install"><img src="assets/trench-mascot.png" alt="" /><div><p class="eyebrow">ENTER THE TRENCH</p><h2>One process.<br />Five tools. Zero keys.</h2><button class="command" data-copy="npx --yes github:Floopi10/trench-mcp"><code>npx --yes github:Floopi10/trench-mcp</code><span>copy</span></button></div></section>
+  </main>
+  <footer><div class="shell"><p><strong>TRENCH MCP</strong> · Built in the open.</p><p>Market intelligence, not financial advice.</p></div></footer>
+  <script src="app.js"></script>
+</body>
+</html>

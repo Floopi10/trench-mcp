@@ -39,3 +39,12 @@ BOUNDARIES:
 - No wallet connection, private key, signing, swap, custody, or autonomous trading.
 - Exit receive/impact values are constant-product pressure proxies, not executable venue quotes.
 - Live market data may lag or omit pools; exact execution must be verified at the venue.
+
+SITE AND BRAND UPDATE:
+- README mascot asset: assets/trench-mascot.png
+- Website mascot asset: docs/assets/trench-mascot.png
+- Mascot dimensions/mode: 1254x1254 RGBA
+- Mascot SHA256: 2395A65F0F0B4A1A67310D99B4BB14B35492BA5329AEA611218364FE5633C86C
+- Local page title observed: TRENCH MCP
+- Interactive elements observed: 2 sliders, 2 copy controls, 4 navigation links
+- Responsive desktop hero visually inspected in an in-app Chromium browser.

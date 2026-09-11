@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "start": "node bin/trench-mcp.mjs",
-    "check": "node --check bin/trench-mcp.mjs && node --check src/server.mjs && node --check src/tools.mjs && node --test",
+    "check": "node --check bin/trench-mcp.mjs && node --check src/server.mjs && node --check src/tools.mjs && node --check docs/app.js && node --test",
     "inspect": "npx @modelcontextprotocol/inspector node bin/trench-mcp.mjs"
   },
   "engines": {
