@@ -179,7 +179,7 @@ See [SECURITY.md](docs/SECURITY.md) for the threat model.
 - [Security model](docs/SECURITY.md)
 - [Development and contribution](docs/DEVELOPMENT.md)
 - [Verification ledger](docs/VERIFICATION.txt)
-- [Project website](https://floopi10.github.io/trench-mcp/)
+- [Project website](https://trench-mcp.mytodofloopi.workers.dev/)
 
 ## Development
 

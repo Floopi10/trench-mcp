@@ -48,3 +48,7 @@ SITE AND BRAND UPDATE:
 - Local page title observed: TRENCH MCP
 - Interactive elements observed: 2 sliders, 2 copy controls, 4 navigation links
 - Responsive desktop hero visually inspected in an in-app Chromium browser.
+- Initial Pages command reported that the project did not exist (exit 1).
+- Corrected deployment used the generated Workers static-assets project.
+- Observed live URL: https://trench-mcp.mytodofloopi.workers.dev
+- Observed Workers version: e9e1f3a9-402b-4a1b-9553-b78145b29f92

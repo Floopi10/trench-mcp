@@ -13,6 +13,7 @@ npm ci
 npm run check
 npm run inspect
 npm pack --dry-run
+npm run deploy   # deploy static docs/ site through Cloudflare Workers
 ```
 
 ## Adding a tool
