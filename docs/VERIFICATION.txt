@@ -52,3 +52,9 @@ SITE AND BRAND UPDATE:
 - Corrected deployment used the generated Workers static-assets project.
 - Observed live URL: https://trench-mcp.mytodofloopi.workers.dev
 - Observed Workers version: e9e1f3a9-402b-4a1b-9553-b78145b29f92
+
+READOUT OVERFLOW FIX:
+- Screenshot showed the radar status sublabel clipped at the right edge.
+- Radar and grid children now explicitly shrink within their responsive column.
+- Readout has a bounded width, safe right inset, no-wrap labels, and a compact mobile rule.
+- Long install commands now wrap instead of widening the page.
