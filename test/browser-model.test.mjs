@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {pressure} from '../docs/pressure.mjs';import {modelExit,gradeExit} from '../src/slip-engine.mjs';import {Blocks,rotate,clearRows} from '../docs/blocks.mjs';
+test('browser model matches server, including turnover',()=>{for(const liquidityUsd of [5000,10000,100000])for(const sizeUsd of [100,500,1500,5000])for(const volume24hUsd of [0,5000,20000]){const b=pressure(liquidityUsd,sizeUsd,volume24hUsd),m=modelExit({liquidityUsd,sizeUsd});assert.equal(b.receive,m.estimatedReceiveUsd);assert.equal(b.grade,gradeExit({model:m,liquidityUsd,volume24hUsd}).grade);}});
+test('four rotations restore matrix',()=>{const m=[[1,0,0],[1,1,1]];assert.deepEqual(rotate(rotate(rotate(rotate(m)))),m);});
+test('clear row keeps dimensions',()=>{const b=Array.from({length:20},()=>Array(10).fill(0));b[19].fill(1);const r=clearRows(b);assert.equal(r.cleared,1);assert.equal(r.board.length,20);assert.ok(r.board.flat().every(v=>v===0));});
+test('wall collision and hard drop',()=>{const g=new Blocks(()=>.4);for(let i=0;i<20;i++)g.move(-1,0);assert.equal(g.move(-1,0),false);g.drop();assert.ok(g.board.flat().some(Boolean));assert.ok(!g.collides(g.piece));});
+test('occupied spawn ends game',()=>{const g=new Blocks();g.board[0].fill(1);g.spawn();assert.equal(g.over,true);});

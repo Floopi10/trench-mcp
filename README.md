@@ -1,16 +1,29 @@
-<div align="center">
-  <img src="assets/trench-mascot.png" width="220" alt="Trench, the terminal-green axolotl mascot" />
-  <h1>TRENCH MCP</h1>
-  <p><strong>Live Robinhood Chain market context for AI agents.</strong></p>
-  <p>Inspect liquidity. Model exit pressure. Explain the evidence. Never touch a wallet.</p>
+![TRENCH — market tools for AI agents](docs/assets/trench-banner.png)
 
-  [![CI](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml)
-  [![MCP](https://img.shields.io/badge/MCP-stdio-62ff8f)](https://modelcontextprotocol.io/)
-  [![Node](https://img.shields.io/badge/Node-22%2B-62ff8f)](https://nodejs.org/)
-  [![License](https://img.shields.io/badge/license-MIT-9aa4a0)](LICENSE)
-</div>
+# TRENCH MCP
 
----
+**Check liquidity before you trust the number.**
+
+TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain — not a made-up executable quote.
+
+[Try the browser model](https://trench-mcp.mytodofloopi.workers.dev/#console) · [Connect your agent](#connect-your-agent) · [Read the assumptions](docs/MODEL.md) · [Play Terminal Blocks](https://trench-mcp.mytodofloopi.workers.dev/#arcade)
+
+[![CI](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml)
+[![Node](https://img.shields.io/badge/Node-22%2B-8bf7a3)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/license-MIT-9aa4a0)](LICENSE)
+
+## Understand it in 20 seconds
+
+| Question | Answer |
+| --- | --- |
+| What does it do? | Reads token pools and models how a USD position size changes estimated exit pressure. |
+| Where is the AI? | Your MCP-compatible AI client calls the tools and interprets their structured results. The pressure calculation is deterministic. |
+| Can I try it immediately? | Yes. The browser playground takes manual liquidity, position and volume inputs — no account or wallet connection. |
+| Where does live data happen? | The local MCP server reads public DexScreener pools and Robinhood Chain RPC. The website playground is not a live token scanner. |
+| Does it execute trades? | No signing, approvals, swaps or custody. It does not look up your wallet balance. |
+| Is the result a quote? | No. It is a disclosed constant-product proxy, not a complete Uniswap v4 execution simulation. |
+
+![Actual browser pressure playground with manual inputs](docs/assets/playground.png)
 
 ## The problem
 
@@ -18,7 +31,7 @@ AI agents can summarize token pages, read contracts and repeat social posts. Tha
 
 > **If this position had to exit now, what does the visible market structure suggest?**
 
-Raw liquidity alone is not enough. A `$50K` position and a `$500` position do not face the same market. TRENCH binds the token, position size, observed primary pool, current chain block and an explicit pressure model into one structured MCP result.
+Raw liquidity alone is not enough. A `$50K` position and a `$500` position do not face the same market. TRENCH collects the token, position size, observed primary pool, RPC block and an explicit pressure model in one structured MCP result. Pool data and RPC block reads are separate observations, not an atomic block-pinned snapshot.
 
 ## What TRENCH is
 
@@ -56,7 +69,9 @@ npm ci
 npm start
 ```
 
-Add it to an MCP client:
+## Connect your agent
+
+After installing locally, add it to an MCP-compatible client:
 
 ```json
 {
@@ -151,7 +166,7 @@ These are transparent product rules, not predictions. Read [MODEL.md](docs/MODEL
 
 TRENCH returns facts and boundaries together. A good agent should:
 
-1. State the observation time and chain block.
+1. State the observation time and available RPC block; do not imply the pool was read at that exact block.
 2. Name the selected pool and visible liquidity.
 3. Tie the grade to the requested position size.
 4. Label modeled impact as a proxy.
@@ -198,6 +213,24 @@ Version `0.1.0` intentionally does one job well: convert current market structur
 ## Mascot
 
 **Trench** is a terminal-green chibi axolotl carrying a market scanner. The axolotl fits the product: it stays calm in hostile environments, sees what is happening below the surface and does not press the trade button for you.
+
+## Terminal Blocks
+
+A small browser-only falling-block game lives beside the research tools. Use arrow keys to move and rotate, Space to drop, and P to pause while the board is focused. Touch buttons are available on phones.
+
+Clear rows to score. The best score is stored only in this browser through local storage; clearing site data resets it. Switching tabs or scrolling away pauses play. There are no rewards, token gates or wallet connections. The game does not change a market grade.
+
+## Pixel field notes
+
+The main mascot stays a terminal-green pixel axolotl. These companion illustrations add personality without turning the product interface into a toy.
+
+<table><tr><td align="center"><img src="docs/assets/trench-builder.png" width="260" alt="Builder axolotl with a laptop" /><br/><strong>Builder</strong><br/>Check the inputs. Read the source.</td><td align="center"><img src="docs/assets/trench-diver.png" width="260" alt="Diver axolotl with research goggles" /><br/><strong>Diver</strong><br/>Look below the headline number.</td></tr></table>
+
+## What is tested
+
+`npm run check` runs syntax checks and the test suite, including real stdio MCP integration tests, 108 synthetic browser/server model comparisons, and game-engine rotation, collision, row-clearing and game-over checks.
+
+Tests verify implementation behavior. They do not certify a token, guarantee provider availability, or make the modeled proceeds executable. Live results can change between requests.
 
 ## License
 
