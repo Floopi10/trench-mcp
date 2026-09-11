@@ -7,6 +7,12 @@
   "bin": {
     "trench-mcp": "bin/trench-mcp.mjs"
   },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "node bin/trench-mcp.mjs",
     "check": "node --check bin/trench-mcp.mjs && node --check src/server.mjs && node --check src/tools.mjs && node --test",
