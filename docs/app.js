@@ -1,22 +1,5 @@
-import {pressure} from './pressure.mjs';
-import {Blocks} from './blocks.mjs';
-const $=s=>document.querySelector(s),currency=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
-const amounts=['liquidity','size','volume'].map(id=>$('#'+id));
-function updateModel(){const [liq,size,vol]=amounts.map(e=>Number(e.value)),r=pressure(liq,size,vol);$('#liqOut').textContent=currency.format(liq);$('#sizeOut').textContent=currency.format(size);$('#volumeOut').textContent=currency.format(vol);$('#receive').textContent=currency.format(r.receive);$('#impact').textContent=r.impact.toFixed(2)+'%';$('#ratio').textContent=r.ratio.toFixed(2)+'%';$('#grade').textContent=r.grade;$('#reason').textContent=r.reason;const color={DEEP:'#8bf7a3',THIN:'#ffc58b',CRITICAL:'#ff9686'}[r.grade];$('#grade').style.color=color;$('#pressure-bar').style.background=color;$('#pressure-bar').style.width=Math.min(100,r.ratio*10)+'%';}
-amounts.forEach(e=>e.addEventListener('input',updateModel));document.querySelectorAll('[data-size]').forEach(b=>b.addEventListener('click',()=>{$('#size').value=b.dataset.size;updateModel();}));updateModel();
-document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);$('#copy-status').textContent='Command copied. Paste it into your terminal.';}catch{$('#copy-status').textContent='Clipboard unavailable. Select and copy the command manually.';}}));
-const canvas=$('#game'),ctx=canvas.getContext('2d'),game=new Blocks(),palette=['','#8bf7a3','#5ed9c1','#aacbff','#e4dd91','#eeabcc','#e5aa7d','#a8b889'];
-let running=false,paused=false,last=0,acc=0,frame=0,best=0;
-try{best=Number(localStorage.getItem('trench-stack-best'))||0;}catch{}
-$('#best').textContent=best;
-function cell(x,y,color,ghost=false){ctx.fillStyle=color;ctx.globalAlpha=ghost?.16:1;ctx.fillRect(x*30+2,y*30+2,26,26);ctx.globalAlpha=1;if(!ghost){ctx.fillStyle='#ffffff40';ctx.fillRect(x*30+3,y*30+3,24,3);}}
-function draw(){ctx.fillStyle='#050d0a';ctx.fillRect(0,0,300,600);ctx.strokeStyle='#182b21';ctx.lineWidth=1;for(let x=0;x<=10;x++){ctx.beginPath();ctx.moveTo(x*30,0);ctx.lineTo(x*30,600);ctx.stroke();}for(let y=0;y<=20;y++){ctx.beginPath();ctx.moveTo(0,y*30);ctx.lineTo(300,y*30);ctx.stroke();}game.board.forEach((r,y)=>r.forEach((v,x)=>{if(v)cell(x,y,palette[v]);}));if(!game.over){let ghost={...game.piece};while(!game.collides({...ghost,y:ghost.y+1}))ghost.y++;ghost.m.forEach((r,y)=>r.forEach((v,x)=>{if(v)cell(ghost.x+x,ghost.y+y,palette[ghost.color],true);}));game.piece.m.forEach((r,y)=>r.forEach((v,x)=>{if(v)cell(game.piece.x+x,game.piece.y+y,palette[game.piece.color]);}));}if(!running||paused||game.over){ctx.fillStyle='#050d0ad9';ctx.fillRect(0,230,300,120);ctx.fillStyle='#8bf7a3';ctx.font='20px monospace';ctx.textAlign='center';ctx.fillText(game.over?'STACK FULL':paused?'PAUSED':'READY TO STACK?',150,286);ctx.font='12px monospace';ctx.fillText(game.over?'Press Start to restart':paused?'Press Resume to continue':'Press Start game',150,315);}$('#score').textContent=game.score;$('#lines').textContent=game.lines;$('#game-state').textContent=game.over?'GAME OVER':!running?'READY':paused?'PAUSED':'PLAYING';$('#game-pause').textContent=paused?'Resume':'Pause';$('#game-pause').disabled=!running||game.over;}
-function saveBest(){if(game.score>best){best=game.score;$('#best').textContent=best;try{localStorage.setItem('trench-stack-best',String(best));}catch{}}}
-function tick(now){frame=0;if(!running||paused||game.over)return;acc+=Math.min(now-last,100);last=now;const speed=Math.max(100,650-Math.floor(game.lines/10)*65);if(acc>=speed){game.step();acc=0;}saveBest();draw();if(!game.over)frame=requestAnimationFrame(tick);}
-function resumeClock(){cancelAnimationFrame(frame);last=performance.now();acc=0;frame=requestAnimationFrame(tick);}
-function pause(force){if(!running||game.over)return;paused=force??!paused;if(paused)cancelAnimationFrame(frame);else resumeClock();draw();}
-$('#game-start').addEventListener('click',()=>{saveBest();game.reset();running=true;paused=false;resumeClock();canvas.focus({preventScroll:true});draw();});$('#game-pause').addEventListener('click',()=>pause());
-function action(a){if(!running||paused||game.over)return;({left:()=>game.move(-1,0),right:()=>game.move(1,0),rotate:()=>game.turn(),down:()=>game.step(),drop:()=>game.drop()})[a]?.();saveBest();draw();}
-document.querySelectorAll('[data-game]').forEach(b=>b.addEventListener('click',()=>action(b.dataset.game)));
-canvas.addEventListener('keydown',e=>{const keys={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'rotate',ArrowDown:'down',' ':'drop'};if(keys[e.key]){e.preventDefault();action(keys[e.key]);}else if(e.key.toLowerCase()==='p'){e.preventDefault();pause();}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)pause(true);});new IntersectionObserver(entries=>{if(!entries[0].isIntersecting)pause(true);},{threshold:.1}).observe(canvas);window.addEventListener('blur',()=>pause(true));draw();
+document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+ const status = document.querySelector('#copy-status');
+ try { await navigator.clipboard.writeText(button.dataset.copy); if(status) status.textContent = 'Copied. Paste into your MCP client.'; }
+ catch { if(status) status.textContent = 'Select the endpoint and copy it manually.'; }
+}));

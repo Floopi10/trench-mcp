@@ -10,7 +10,7 @@
 
 TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain — not a made-up executable quote.
 
-[Try the browser model](https://trench-mcp.mytodofloopi.workers.dev/#console) · [Connect your agent](#connect-your-agent) · [Read the assumptions](docs/MODEL.md) · [Play Terminal Blocks](https://trench-mcp.mytodofloopi.workers.dev/#arcade)
+[Try the browser model](https://trenchmcp.lol/terminal.html) · [Connect your agent](#connect-your-agent) · [Read the assumptions](docs/MODEL.md)
 
 [![CI](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/Node-22%2B-8bf7a3)](https://nodejs.org/)
@@ -23,7 +23,7 @@ TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, p
 | What does it do? | Reads token pools and models how a USD position size changes estimated exit pressure. |
 | Where is the AI? | Your MCP-compatible AI client calls the tools and interprets their structured results. The pressure calculation is deterministic. |
 | Can I try it immediately? | Yes. The browser playground takes manual liquidity, position and volume inputs — no account or wallet connection. |
-| Where does live data happen? | The local MCP server reads public DexScreener pools and Robinhood Chain RPC. The website playground is not a live token scanner. |
+| Where does live data happen? | The remote or local MCP server reads public DexScreener pools and Robinhood Chain RPC. The website playground is not a live token scanner. |
 | Does it execute trades? | No signing, approvals, swaps or custody. It does not look up your wallet balance. |
 | Is the result a quote? | No. It is a disclosed constant-product proxy, not a complete Uniswap v4 execution simulation. |
 
@@ -47,7 +47,7 @@ It does **not** trade. It does **not** accept private keys. It does **not** pret
 user question
      │
      ▼
-AI agent ──MCP/stdio──► TRENCH
+AI agent ──MCP/HTTP or stdio──► TRENCH
                          ├── Robinhood Chain RPC: chain + block
                          ├── DexScreener: pools + liquidity + volume
                          └── SLIP engine: size-aware pressure model
@@ -74,6 +74,20 @@ npm start
 ```
 
 ## Connect your agent
+
+### Remote HTTPS — no local installation
+
+Add this URL to a client supporting MCP Streamable HTTP:
+
+```text
+https://trench-mcp.mytodofloopi.workers.dev/mcp
+```
+
+No authentication is required for these public read-only tools. Start with `chain_health`, then ask for `inspect_token` using a public token address. The website's separate [Terminal](https://trenchmcp.lol/terminal.html) is a manual calculator; it is not the remote MCP server.
+
+The hosted endpoint is rate limited (per-IP, best effort), limits request bodies to 16 KiB, validates browser origins, and only queries configured public data providers. It does not accept arbitrary RPC URLs or credentials from callers. Availability and provider coverage are not guaranteed. Do not send secrets.
+
+### Local stdio
 
 After installing locally, add it to an MCP-compatible client:
 
@@ -218,11 +232,6 @@ Version `0.1.0` intentionally does one job well: convert current market structur
 
 **Trench** is a terminal-green chibi axolotl carrying a market scanner. The axolotl fits the product: it stays calm in hostile environments, sees what is happening below the surface and does not press the trade button for you.
 
-## Terminal Blocks
-
-A small browser-only falling-block game lives beside the research tools. Use arrow keys to move and rotate, Space to drop, and P to pause while the board is focused. Touch buttons are available on phones.
-
-Clear rows to score. The best score is stored only in this browser through local storage; clearing site data resets it. Switching tabs or scrolling away pauses play. There are no rewards, token gates or wallet connections. The game does not change a market grade.
 
 ## Pixel field notes
 
@@ -232,7 +241,7 @@ The main mascot stays a terminal-green pixel axolotl. These companion illustrati
 
 ## What is tested
 
-`npm run check` runs syntax checks and the test suite, including real stdio MCP integration tests, 108 synthetic browser/server model comparisons, and game-engine rotation, collision, row-clearing and game-over checks.
+`npm run check` runs syntax checks and the test suite, including real stdio MCP integration tests, 108 synthetic browser/server model comparisons, HTTP MCP integration, origin checks, body limits and rate-limit checks.
 
 Tests verify implementation behavior. They do not certify a token, guarantee provider availability, or make the modeled proceeds executable. Live results can change between requests.
 

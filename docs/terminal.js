@@ -1,0 +1,5 @@
+import {pressure} from './pressure.mjs';
+const $=s=>document.querySelector(s),currency=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+const amounts=['liquidity','size','volume'].map(id=>$('#'+id));
+function updateModel(){const [liq,size,vol]=amounts.map(e=>Number(e.value)),r=pressure(liq,size,vol);$('#liqOut').textContent=currency.format(liq);$('#sizeOut').textContent=currency.format(size);$('#volumeOut').textContent=currency.format(vol);$('#receive').textContent=currency.format(r.receive);$('#impact').textContent=r.impact.toFixed(2)+'%';$('#ratio').textContent=r.ratio.toFixed(2)+'%';$('#grade').textContent=r.grade;$('#reason').textContent=r.reason;const color={DEEP:'#8bf7a3',THIN:'#ffc58b',CRITICAL:'#ff9686'}[r.grade];$('#grade').style.color=color;$('#pressure-bar').style.background=color;$('#pressure-bar').style.width=Math.min(100,r.ratio*10)+'%';}
+amounts.forEach(e=>e.addEventListener('input',updateModel));document.querySelectorAll('[data-size]').forEach(b=>b.addEventListener('click',()=>{$('#size').value=b.dataset.size;updateModel();}));updateModel();

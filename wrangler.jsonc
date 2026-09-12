@@ -6,6 +6,22 @@
     "enabled": true
   },
   "assets": {
-    "directory": "docs"
-  }
+    "directory": "docs",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/mcp",
+      "/health"
+    ]
+  },
+  "main": "src/worker.mjs",
+  "ratelimits": [
+    {
+      "name": "MCP_RATE_LIMITER",
+      "namespace_id": "1010",
+      "simple": {
+        "limit": 60,
+        "period": 60
+      }
+    }
+  ]
 }

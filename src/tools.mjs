@@ -60,7 +60,7 @@ export function explainReport(report) {
   };
 }
 
-export async function getChainHealth({ fetchImpl = fetch, rpcUrl = process.env.RH_RPC_URL || DEFAULT_RPC } = {}) {
+export async function getChainHealth({ fetchImpl = fetch, rpcUrl = globalThis.process?.env?.RH_RPC_URL || DEFAULT_RPC } = {}) {
   async function call(method) {
     const response = await fetchImpl(rpcUrl, {
       method: "POST",
