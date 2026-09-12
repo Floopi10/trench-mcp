@@ -1,4 +1,8 @@
-![TRENCH — market tools for AI agents](docs/assets/trench-banner.png)
+![TRENCH on Robinhood Chain - market tools for AI agents](docs/assets/trench-banner.png)
+
+<p align="center">
+  <img src="docs/assets/trench-avatar.png" alt="TRENCH mascot - terminal-green pixel axolotl" width="180">
+</p>
 
 # TRENCH MCP
 
