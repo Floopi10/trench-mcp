@@ -1,0 +1,18 @@
+/* Bounded ambient animation: decorative, no network feed, no overlay on controls. */
+.hero:has(.project-notes){position:relative;isolation:isolate;overflow:hidden}
+.hero-copy,.depth-lens{position:relative;z-index:1}
+.mascot-rain{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;mask-image:linear-gradient(transparent,#000 15%,#000 75%,transparent)}
+.mascot-rain img{position:absolute;top:-60px;left:var(--x);width:42px;height:42px;object-fit:contain;opacity:0;image-rendering:pixelated;animation:mascot-fall var(--duration) var(--delay) linear infinite}
+@keyframes mascot-fall{0%{transform:translate3d(0,-40px,0) rotate(-12deg);opacity:0}12%,75%{opacity:.18}100%{transform:translate3d(var(--drift),900px,0) rotate(18deg);opacity:0}}
+.notes-slot{min-height:222px;margin-top:28px;max-width:510px}
+.project-notes{background:#0b1917ed;border:1px solid #315343;border-radius:8px;overflow:hidden;box-shadow:0 12px 40px #0002}
+.note-bar{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid #29433e;font:9px Mono;color:#b0c6bb;letter-spacing:.05em}
+.note-dot{width:5px;height:5px;border-radius:50%;background:#8bf7a3;box-shadow:0 0 10px #8bf7a366}
+.note-bar>span:nth-child(2){flex:1}.note-close{border:0;background:transparent;color:#b0c6bb;padding:4px 8px;min-height:28px;font:18px/1 Mono}
+.note-card{padding:15px 16px 10px;min-height:127px}.note-label{color:#8bf7a3;font:9px Mono;letter-spacing:.05em;margin:0 0 9px}
+.project-notes h2{font-size:20px;line-height:1.2;letter-spacing:-.035em;margin:0 0 8px}.note-detail{font-size:12px;color:#b0c6bb;line-height:1.6;margin:0;max-width:53ch}
+.note-bottom{display:flex;align-items:center;gap:8px;padding:0 16px 12px}.note-tool{flex:1;color:#8bf7a3;font:9px Mono}.note-counter{font:9px Mono;color:#b0c6bb}.note-next,.notes-restore{background:transparent;border:1px solid #36574a;font:10px Mono;color:#b0c6bb;min-height:32px;padding:6px 9px}.note-next:hover,.notes-restore:hover{background:#193324}.project-notes[hidden],.notes-restore[hidden]{display:none}
+.hero[data-motion-paused=true] .mascot-rain img{animation-play-state:paused}
+@media(max-width:900px){.notes-slot{max-width:none}.mascot-rain img:nth-child(n+7){display:none}}
+@media(max-width:480px){.notes-slot{min-height:246px}.note-card{min-height:151px}.note-bar{font-size:8px}.project-notes h2{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.mascot-rain{display:none}}
