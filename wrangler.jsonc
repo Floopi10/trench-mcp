@@ -10,7 +10,8 @@
     "binding": "ASSETS",
     "run_worker_first": [
       "/mcp",
-      "/health"
+      "/health",
+      "/api/analyze"
     ]
   },
   "main": "src/worker.mjs",

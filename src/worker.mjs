@@ -1,14 +1,15 @@
 import { createMcpHandler } from '@modelcontextprotocol/server';
 import { buildServer } from './server.mjs';
+import { analyzeExit, validateInput } from './slip-engine.mjs';
 
 const MAX_BODY = 16 * 1024;
 const origins = new Set(['https://trenchmcp.lol', 'https://www.trenchmcp.lol', 'https://trench-mcp.mytodofloopi.workers.dev']);
 const handler = createMcpHandler(() => buildServer(), { responseMode: 'json' });
 
-export function createWorker(mcp = handler) {
+export function createWorker(mcp = handler, analyze = analyzeExit) {
  return { async fetch(request, env) {
   const url = new URL(request.url);
-  if (!['/mcp', '/health'].includes(url.pathname)) return env.ASSETS.fetch(request);
+  if (!['/mcp', '/health', '/api/analyze'].includes(url.pathname)) return env.ASSETS.fetch(request);
   const origin = request.headers.get('Origin');
   const headers = new Headers({ 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   if (origin && !origins.has(origin)) return new Response('Origin not allowed', { status: 403, headers });
@@ -45,6 +46,17 @@ export function createWorker(mcp = handler) {
    parsedBody = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
    if (Array.isArray(parsedBody)) return reply('Batch requests are not supported', 400);
   } catch { return reply('Invalid JSON request', 400); }
+  if (url.pathname === '/api/analyze') {
+   headers.set('Content-Type', 'application/json');
+   if (!parsedBody || typeof parsedBody !== 'object' || Object.keys(parsedBody).some(key => !['token','sizeUsd'].includes(key)) || typeof parsedBody.token !== 'string' || typeof parsedBody.sizeUsd !== 'number') return reply(JSON.stringify({error:'Provide only token (EVM address) and sizeUsd (number).'}),400);
+   try { validateInput(parsedBody.token, parsedBody.sizeUsd); }
+   catch { return reply(JSON.stringify({error:'Invalid token address or USD size. Maximum size is $10,000,000.'}),400); }
+   try { return reply(JSON.stringify(await analyze({token:parsedBody.token,sizeUsd:parsedBody.sizeUsd})),200); }
+   catch (error) {
+    const noPool = error instanceof Error && error.message === 'No liquid Robinhood Chain pool was found for this token.';
+    return reply(JSON.stringify({error:noPool?'No liquid Robinhood Chain pool found for this token. Check the address and chain.':'Public data provider unavailable or incomplete. No estimate generated; please retry.'}),noPool?404:502);
+   }
+  }
   try {
    const response = await mcp.fetch(request, { parsedBody });
    const merged = new Headers(response.headers);

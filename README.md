@@ -10,7 +10,7 @@
 
 TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain — not a made-up executable quote.
 
-[Try the browser model](https://trenchmcp.lol/terminal.html) · [Connect your agent](#connect-your-agent) · [Read the assumptions](docs/MODEL.md)
+[Open the terminal](https://trenchmcp.lol/terminal.html) · [Connect your agent](#connect-your-agent) · [Read the assumptions](docs/MODEL.md)
 
 [![CI](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/Node-22%2B-8bf7a3)](https://nodejs.org/)
@@ -22,12 +22,12 @@ TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, p
 | --- | --- |
 | What does it do? | Reads token pools and models how a USD position size changes estimated exit pressure. |
 | Where is the AI? | Your MCP-compatible AI client calls the tools and interprets their structured results. The pressure calculation is deterministic. |
-| Can I try it immediately? | Yes. The browser playground takes manual liquidity, position and volume inputs — no account or wallet connection. |
-| Where does live data happen? | The remote or local MCP server reads public DexScreener pools and Robinhood Chain RPC. The website playground is not a live token scanner. |
+| Can I try it immediately? | Yes. Paste a Robinhood Chain token address and a USD position size, or load the separately labeled synthetic demo. No account or wallet connection. |
+| Where does live data happen? | The hosted server reads DexScreener pools and Robinhood Chain RPC for both the browser terminal and MCP clients. Demo mode uses manual inputs. |
 | Does it execute trades? | No signing, approvals, swaps or custody. It does not look up your wallet balance. |
 | Is the result a quote? | No. It is a disclosed constant-product proxy, not a complete Uniswap v4 execution simulation. |
 
-![Actual browser pressure playground with manual inputs](docs/assets/playground.png)
+![TRENCH research desk displaying a clearly labeled synthetic example](docs/assets/terminal-workbench.png)
 
 ## The problem
 
@@ -83,7 +83,7 @@ Add this URL to a client supporting MCP Streamable HTTP:
 https://trench-mcp.mytodofloopi.workers.dev/mcp
 ```
 
-No authentication is required for these public read-only tools. Start with `chain_health`, then ask for `inspect_token` using a public token address. The website's separate [Terminal](https://trenchmcp.lol/terminal.html) is a manual calculator; it is not the remote MCP server.
+No authentication is required for these public read-only tools. Start with `chain_health`, then ask for `inspect_token` using a public token address. The separate [Terminal](https://trenchmcp.lol/terminal.html) calls the hosted analysis API. Its Demo mode stays synthetic. MCP clients use the endpoint above.
 
 The hosted endpoint is rate limited (per-IP, best effort), limits request bodies to 16 KiB, validates browser origins, and only queries configured public data providers. It does not accept arbitrary RPC URLs or credentials from callers. Availability and provider coverage are not guaranteed. Do not send secrets.
 
@@ -248,3 +248,15 @@ Tests verify implementation behavior. They do not certify a token, guarantee pro
 ## License
 
 MIT
+
+## Browser research desk
+
+The terminal has live token input and a separate synthetic demo. It shows pool liquidity, volume, modeled depth, four independent position-size scenarios (10/25/50/100%), a receive curve, observation evidence and downloadable JSON/Markdown receipts. These are research estimates, not orders or contract-safety scores.
+
+`POST https://trench-mcp.mytodofloopi.workers.dev/api/analyze`
+
+Body: `{"token":"<public EVM token address>","sizeUsd":5000}`. Only these two fields are accepted. Uses the same `analyzeExit` engine as MCP. Browser queries leave your device for the hosted server and public providers; never submit secrets.
+
+Origin validation, 16 KiB body limits and the shared 60 requests/minute per-IP best-effort limiter apply. Invalid input returns 400, no liquid pool 404, rate limiting 429, and provider failures 502. Errors never fall back silently to demo data. Results are snapshots, not an automatic live stream. Changing inputs invalidates the visible receipt; rerun to fetch new data.
+
+The session console supports `help`, `demo`, `analyze <token> <USD size>` and `clear`. It is not a shell, wallet or trading bot. Activity is real session activity and is kept in memory only.
