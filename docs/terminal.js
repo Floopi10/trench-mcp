@@ -28,6 +28,13 @@ function download(type){if(!receipt)return;const content=type==='json'?JSON.stri
 $('export-json').addEventListener('click',()=>download('json'));$('export-md').addEventListener('click',()=>download('md'));$('clear-log').addEventListener('click',()=>$('activity-log').replaceChildren());
 $('command-form').addEventListener('submit',e=>{e.preventDefault();const raw=$('command').value.trim();$('command').value='';if(!raw)return;const [name,...args]=raw.split(/\s+/);if(name==='help')log('COMMANDS: demo | analyze <token> <USD size> | clear | help. Commands never execute trades.');else if(name==='demo')switchMode('demo');else if(name==='clear')$('activity-log').replaceChildren();else if(name==='analyze'&&args.length===2){switchMode('live');$('token').value=args[0];$('position').value=args[1];runAnalysis();}else log('Unknown command. Type help to see supported commands.',true);});
 switchMode('live');log('READY · Enter a public token address, or load a synthetic demo.');
+document.addEventListener('trench:select-token',event=>{
+ const token=event.detail?.token;
+ if(typeof token!=='string'||!/^0x[a-fA-F0-9]{40}$/.test(token))return;
+ switchMode('live');$('token').value=token;$('position').value='1000';
+ const url=new URL(location.href);url.searchParams.set('token',token);url.searchParams.set('analyze','1');history.replaceState(null,'',url);
+ document.querySelector('.desk-grid').scrollIntoView({block:'start',behavior:'auto'});$('token').focus({preventScroll:true});runAnalysis();
+});
 // A market-card click requests one default-size, read-only analysis.
 const linked = new URLSearchParams(location.search), linkedToken = linked.get('token');
 if (linkedToken && /^0x[a-fA-F0-9]{40}$/.test(linkedToken)) {

@@ -5,6 +5,11 @@ if(section){
  let queue=[],rowTimer,pollTimer,cooldownTimer,controller,paused=false,interacting=false,nextFetch=0,expiresAt=0,expiryTimer;
  function el(tag,cls,text){const e=document.createElement(tag);e.className=cls;e.textContent=text;return e;}
  function say(text){feedback.hidden=false;feedback.textContent=text;}
+ function selectToken(ca){
+  if(!/^0x[a-fA-F0-9]{40}$/.test(ca))return;
+  if(document.getElementById('analysis-form'))document.dispatchEvent(new CustomEvent('trench:select-token',{detail:{token:ca}}));
+  else location.href=`terminal.html?token=${ca}&analyze=1`;
+ }
  function placeholder(title,detail){empty.hidden=rows.size>0;empty.querySelector('[data-empty-title]').textContent=title;empty.querySelector('[data-empty-detail]').textContent=detail;}
  function add({token,time}){
   if(rows.has(token.address)||rows.size>=24)return;
@@ -13,6 +18,7 @@ if(section){
   const contract=el('td','market-contract',''),copy=el('button','copy-contract',`${token.address.slice(0,8)}…${token.address.slice(-6)}`);copy.type='button';copy.title=token.address;copy.setAttribute('aria-label',`Copy CA ${token.address}`);
   copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(token.address);say(`Copied ${token.address}`);}catch{say(`Copy manually: ${token.address}`);}});contract.append(copy);
   const actions=el('td','market-actions',''),analyze=el('a','','Analyze ↗');analyze.href=`terminal.html?token=${token.address}&analyze=1`;analyze.setAttribute('aria-label',`Analyze ${token.symbol} at $1,000`);
+  analyze.addEventListener('click',event=>{if(document.getElementById('analysis-form')&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey){event.preventDefault();selectToken(token.address);}});
   const agent=el('a','agent-link','Agent');agent.href=`connect.html?token=${token.address}`;actions.append(analyze,agent);
   row.append(observed,name,contract,el('td','token-liquidity',fmt.format(token.liquidityUsd)),actions);grid.append(row);rows.set(token.address,row);empty.hidden=true;
  }
@@ -48,6 +54,6 @@ if(section){
  function schedule(){clearTimeout(pollTimer);reveal();if(!paused&&!document.hidden){load();pollTimer=setTimeout(schedule,30000);}}
  pause.addEventListener('click',()=>{paused=!paused;pause.textContent=paused?'Resume':'Pause';pause.setAttribute('aria-pressed',String(paused));if(paused){controller?.abort();status.textContent='Paused · displayed snapshot is not refreshing';}controls();schedule();});refresh.addEventListener('click',load);
  grid.addEventListener('mouseenter',()=>{interacting=true;reveal();});grid.addEventListener('mouseleave',()=>{interacting=grid.contains(document.activeElement);reveal();});grid.addEventListener('focusin',()=>{interacting=true;reveal();});grid.addEventListener('focusout',e=>{if(!grid.contains(e.relatedTarget)){interacting=grid.matches(':hover');reveal();}});
- section.querySelector('[data-scan-form]').addEventListener('submit',e=>{e.preventDefault();const ca=section.querySelector('#scanner-ca').value.trim();if(/^0x[a-fA-F0-9]{40}$/.test(ca))location.href=`terminal.html?token=${ca}&analyze=1`;});
+  section.querySelector('[data-scan-form]').addEventListener('submit',e=>{e.preventDefault();selectToken(section.querySelector('#scanner-ca').value.trim());});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)controller?.abort();expire();schedule();});reduced.addEventListener('change',reveal);schedule();
 }

@@ -1,4 +1,5 @@
 /* Full-width chrome, restrained colors, and an inspectable market queue. */
+.desk .market-section.shell{width:100%;margin:0;padding:0 0 22px}.desk .market-scroll{max-height:285px}.desk .market-heading{padding:16px 20px}.desk .market-heading h2{font-size:25px}.desk .scanner-command{padding-block:9px}.desk .market-card td{height:58px}.desk .market-table input{width:auto}
 .market-table caption{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .market-section{padding-block:32px 40px}.scanner-shell{border:1px solid #30473f;background:#091512;border-radius:6px;overflow:hidden}
 .market-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px 16px}.market-heading .eyebrow{font-size:9px;margin:0 0 5px;color:#92b3a1}.market-heading h2{font:700 clamp(24px,3vw,34px)/1.15 Mono;letter-spacing:-.055em;margin:0}.scanner-cursor{color:#8bf7a3}
