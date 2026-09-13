@@ -1,15 +1,16 @@
 import { createMcpHandler } from '@modelcontextprotocol/server';
 import { buildServer } from './server.mjs';
 import { analyzeExit, validateInput } from './slip-engine.mjs';
+import { readMarkets } from './market-feed.mjs';
 
 const MAX_BODY = 16 * 1024;
 const origins = new Set(['https://trenchmcp.lol', 'https://www.trenchmcp.lol', 'https://trench-mcp.mytodofloopi.workers.dev']);
 const handler = createMcpHandler(() => buildServer(), { responseMode: 'json' });
 
-export function createWorker(mcp = handler, analyze = analyzeExit) {
+export function createWorker(mcp = handler, analyze = analyzeExit, markets = readMarkets) {
  return { async fetch(request, env) {
   const url = new URL(request.url);
-  if (!['/mcp', '/health', '/api/analyze'].includes(url.pathname)) return env.ASSETS.fetch(request);
+  if (!['/mcp', '/health', '/api/analyze', '/api/markets'].includes(url.pathname)) return env.ASSETS.fetch(request);
   const origin = request.headers.get('Origin');
   const headers = new Headers({ 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   if (origin && !origins.has(origin)) return new Response('Origin not allowed', { status: 403, headers });
@@ -22,6 +23,12 @@ export function createWorker(mcp = handler, analyze = analyzeExit) {
   if (!env.MCP_RATE_LIMITER) return reply('Service temporarily unavailable', 503);
   const { success } = await env.MCP_RATE_LIMITER.limit({ key: request.headers.get('CF-Connecting-IP') || 'unknown' });
   if (!success) { headers.set('Retry-After', '60'); return reply('Rate limit exceeded', 429); }
+  if (url.pathname === '/api/markets') {
+   if (request.method !== 'GET') return reply('Method not allowed', 405);
+   headers.set('Content-Type', 'application/json');
+   try { return reply(JSON.stringify(await markets()), 200); }
+   catch { return reply(JSON.stringify({ error: 'Market feed unavailable. No synthetic tokens substituted. Retry shortly or enter a CA in the terminal.' }), 502); }
+  }
   if (url.pathname === '/health') {
    if (request.method !== 'GET') return reply('Method not allowed', 405);
    headers.set('Content-Type', 'application/json');

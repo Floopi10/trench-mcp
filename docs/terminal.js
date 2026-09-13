@@ -28,3 +28,10 @@ function download(type){if(!receipt)return;const content=type==='json'?JSON.stri
 $('export-json').addEventListener('click',()=>download('json'));$('export-md').addEventListener('click',()=>download('md'));$('clear-log').addEventListener('click',()=>$('activity-log').replaceChildren());
 $('command-form').addEventListener('submit',e=>{e.preventDefault();const raw=$('command').value.trim();$('command').value='';if(!raw)return;const [name,...args]=raw.split(/\s+/);if(name==='help')log('COMMANDS: demo | analyze <token> <USD size> | clear | help. Commands never execute trades.');else if(name==='demo')switchMode('demo');else if(name==='clear')$('activity-log').replaceChildren();else if(name==='analyze'&&args.length===2){switchMode('live');$('token').value=args[0];$('position').value=args[1];runAnalysis();}else log('Unknown command. Type help to see supported commands.',true);});
 switchMode('live');log('READY · Enter a public token address, or load a synthetic demo.');
+// A market-card click requests one default-size, read-only analysis.
+const linked = new URLSearchParams(location.search), linkedToken = linked.get('token');
+if (linkedToken && /^0x[a-fA-F0-9]{40}$/.test(linkedToken)) {
+ $('token').value=linkedToken; $('position').value='1000';
+ message('Selected from observed markets. Default model size: $1,000.');
+ if (linked.get('analyze')==='1') runAnalysis();
+}

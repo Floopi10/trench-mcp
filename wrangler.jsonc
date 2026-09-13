@@ -11,7 +11,8 @@
     "run_worker_first": [
       "/mcp",
       "/health",
-      "/api/analyze"
+      "/api/analyze",
+      "/api/markets"
     ]
   },
   "main": "src/worker.mjs",

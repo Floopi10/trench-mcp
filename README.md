@@ -277,3 +277,15 @@ Body: `{"token":"<public EVM token address>","sizeUsd":5000}`. Only these two fi
 Origin validation, 16 KiB body limits and the shared 60 requests/minute per-IP best-effort limiter apply. Invalid input returns 400, no liquid pool 404, rate limiting 429, and provider failures 502. Errors never fall back silently to demo data. Results are snapshots, not an automatic live stream. Changing inputs invalidates the visible receipt; rerun to fetch new data.
 
 The session console supports `help`, `demo`, `analyze <token> <USD size>` and `clear`. It is not a shell, wallet or trading bot. Activity is real session activity and is kept in memory only.
+
+## Market discovery feed
+
+The homepage reads `GET /api/markets` from the hosted worker. It samples DexScreener search results for `robinhood WETH`, filters to Robinhood Chain EVM tokens with positive reported pool liquidity, deduplicates by CA using the largest observed pool, and returns up to 24 tokens. This is not a complete launch index, a safety ranking or a trade feed.
+
+Cards reveal at one per second for readability; the browser refreshes the sample every 30 seconds. The server caches successful samples for 30 seconds, coalesces concurrent fetches, limits upstream requests to eight seconds and applies a 15-second failure cooldown. Per-IP service rate limits still apply. Errors are explicit; no synthetic tokens are substituted. Existing cards are marked as potentially stale on a refresh failure.
+
+**Analyze $1,000** opens the browser terminal and runs the existing read-only pressure model for the selected CA. **Ask your agent** opens MCP setup with an address-specific prompt to copy into your connected AI client. There is no embedded LLM, trading permission or automatic purchase.
+
+## AI-assisted development
+
+Implemented with **OpenAI Codex** assistance. AI-authored changes are credited in commit metadata. This is an independent project, not an OpenAI product, partnership or endorsement.
