@@ -10,12 +10,13 @@ test('feed filters chains, malformed addresses and liquidity; deduplicates large
  assert.equal(normalizeMarkets([{...pair(),baseToken:{address,symbol:'X'.repeat(300),name:'N'.repeat(500)}}])[0].symbol.length,24);
  assert.throws(()=>normalizeMarkets({}));
 });
-test('feed coalesces requests, caches for 30 seconds and does not use expired data on failure',async()=>{
+test('feed coalesces requests, labels stale fallback and expires it after five minutes',async()=>{
  let time=100000,calls=0,fail=false;
  const feed=createMarketFeed(async url=>{assert.equal(url,MARKET_SOURCE);calls++;await new Promise(r=>setTimeout(r,5));if(fail)throw new Error('down');return Response.json({pairs:[pair()]});},()=>time);
  const [a,b]=await Promise.all([feed(),feed()]);assert.deepEqual(a,b);assert.equal(calls,1);
- await feed();assert.equal(calls,1);time+=31000;fail=true;await assert.rejects(feed());assert.equal(calls,2);
- await assert.rejects(feed());assert.equal(calls,2);time+=16000;fail=false;await feed();assert.equal(calls,3);
+ await feed();assert.equal(calls,1);time+=31000;fail=true;const old=await feed();assert.equal(old.stale,true);assert.equal(old.observedAt,a.observedAt);assert.equal(calls,2);
+ assert.equal((await feed()).stale,true);assert.equal(calls,2);time+=300000;await assert.rejects(feed());assert.equal(calls,3);
+ time+=16000;fail=false;assert.equal((await feed()).stale,undefined);assert.equal(calls,4);
 });
 test('markets route has CORS, rate limit, method and explicit failure handling',async()=>{
  const env={MCP_RATE_LIMITER:{limit:async()=>({success:true})}};

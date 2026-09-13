@@ -1,76 +1,53 @@
-const section = document.querySelector('[data-market-deck]');
-if (section) {
-  const grid = section.querySelector('.market-grid');
-  const status = section.querySelector('.feed-status');
-  const pause = section.querySelector('[data-feed-pause]');
-  const refresh = section.querySelector('[data-feed-refresh]');
-  const feedback = section.querySelector('.feed-feedback');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const shown = new Set();
-  let queue = [], timer, pollTimer, controller, lastFetch = 0, paused = false, focused = false, hovered = false;
-  const API = 'https://trench-mcp.mytodofloopi.workers.dev/api/markets';
-  const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' });
-  function element(tag, cls, text) { const e = document.createElement(tag); e.className = cls; e.textContent = text; return e; }
-  function add(token) {
-    if (shown.has(token.address) || shown.size >= 24) return;
-    shown.add(token.address);
-    const card = element('article', 'market-card', '');
-    card.append(element('h3', '', token.symbol), element('p', 'token-name', token.name), element('code', '', token.address), element('p', 'token-liquidity', `Observed pool liquidity ${fmt.format(token.liquidityUsd)}`));
-    const actions = element('div', 'market-actions', '');
-    const analyze = element('a', '', 'Analyze $1,000 ↗');
-    analyze.href = `terminal.html?token=${encodeURIComponent(token.address)}&analyze=1`;
-    const copy = element('button', '', 'Copy CA'); copy.type = 'button';
-    copy.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(token.address); feedback.textContent = 'CA copied.'; }
-      catch { feedback.textContent = 'Clipboard unavailable. Select the displayed CA to copy it.'; }
-    });
-    const agent = element('a', '', 'Ask your agent ↗'); agent.href = `connect.html?token=${encodeURIComponent(token.address)}`;
-    actions.append(analyze, copy, agent); card.append(actions); grid.append(card);
-  }
-  function play() {
-    clearTimeout(timer);
-    if (paused || document.hidden || focused || hovered) return;
-    if (reduced.matches) { queue.splice(0).forEach(add); return; }
-    if (queue.length) timer = setTimeout(() => { add(queue.shift()); play(); }, 1000);
-  }
-  async function load() {
-    if (controller || paused || document.hidden || focused || hovered) return;
-    if (Date.now() - lastFetch < 30_000) return;
-    lastFetch = Date.now(); controller = new AbortController(); refresh.disabled = true;
-    const timeout = setTimeout(() => controller?.abort(), 10_000);
-    try {
-      const response = await fetch(API, { signal: controller.signal });
-      if (!response.ok) throw new Error(response.status === 429 ? 'Rate limit reached. Retry in a minute.' : 'Feed unavailable. Retry shortly or enter a CA in the terminal.');
-      const data = await response.json();
-      if (!Array.isArray(data.tokens) || !Number.isFinite(Date.parse(data.observedAt))) throw new Error('Invalid feed response. No tokens displayed.');
-      const tokens = data.tokens.filter(t => /^0x[a-fA-F0-9]{40}$/.test(t.address) && typeof t.symbol === 'string' && typeof t.name === 'string' && Number.isFinite(t.liquidityUsd) && t.liquidityUsd > 0).slice(0,24);
-      if (focused || hovered || paused || document.hidden) return;
-      // Never reorder or remove a card under a pointer or keyboard focus.
-      // A new snapshot is applied only when the grid is not being used.
-      if (!focused && !hovered) {
-        clearTimeout(timer); grid.replaceChildren(); shown.clear(); queue = tokens;
-        if (queue.length) add(queue.shift());
-      }
-      status.classList.remove('error');
-      status.textContent = `${tokens.length} matching tokens · fetched ${new Date(data.observedAt).toLocaleTimeString()} · search sample, not new launches.${tokens.length ? '' : ' No matching liquid pools found.'}`;
-      play();
-    } catch (error) {
-      status.classList.add('error');
-      status.textContent = `${error.name === 'AbortError' ? 'Feed request timed out.' : error.message} ${shown.size ? 'Visible cards are from the previous fetch; they may be stale.' : 'No synthetic tokens substituted.'}`;
-    } finally { clearTimeout(timeout); controller = null; }
-  }
-  function schedule() {
-    clearTimeout(pollTimer); play();
-    if (!paused && !document.hidden) { load(); pollTimer = setTimeout(schedule, 30_000); }
-  }
-  pause.addEventListener('click', () => { paused = !paused; pause.setAttribute('aria-pressed', String(paused)); pause.textContent = paused ? 'Resume feed' : 'Pause feed'; if (paused) controller?.abort(); schedule(); });
-  refresh.addEventListener('click', load);
-  setInterval(() => { refresh.disabled = !!controller || paused || Date.now() - lastFetch < 30_000; }, 1000);
-  grid.addEventListener('mouseenter', () => { hovered = true; play(); });
-  grid.addEventListener('mouseleave', () => { hovered = false; play(); });
-  grid.addEventListener('focusin', () => { focused = true; play(); });
-  grid.addEventListener('focusout', e => { if (!grid.contains(e.relatedTarget)) { focused = false; play(); } });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) controller?.abort(); schedule(); });
-  reduced.addEventListener('change', play);
-  schedule();
+const section=document.querySelector('[data-market-deck]');
+if(section){
+ const grid=section.querySelector('.market-grid'),status=section.querySelector('.feed-status'),pause=section.querySelector('[data-feed-pause]'),refresh=section.querySelector('[data-feed-refresh]'),empty=section.querySelector('.scanner-empty'),feedback=section.querySelector('.feed-feedback');
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)'),rows=new Map(),API='https://trench-mcp.mytodofloopi.workers.dev/api/markets',fmt=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',notation:'compact'});
+ let queue=[],rowTimer,pollTimer,cooldownTimer,controller,paused=false,interacting=false,nextFetch=0,expiresAt=0,expiryTimer;
+ function el(tag,cls,text){const e=document.createElement(tag);e.className=cls;e.textContent=text;return e;}
+ function say(text){feedback.hidden=false;feedback.textContent=text;}
+ function placeholder(title,detail){empty.hidden=rows.size>0;empty.querySelector('[data-empty-title]').textContent=title;empty.querySelector('[data-empty-detail]').textContent=detail;}
+ function add({token,time}){
+  if(rows.has(token.address)||rows.size>=24)return;
+  const row=el('tr','market-card','');row.dataset.address=token.address;
+  const observed=el('td','market-time',time.slice(11,19)),name=el('td','market-token','');name.append(el('strong','',token.symbol),el('small','',token.name));
+  const contract=el('td','market-contract',''),copy=el('button','copy-contract',`${token.address.slice(0,8)}…${token.address.slice(-6)}`);copy.type='button';copy.title=token.address;copy.setAttribute('aria-label',`Copy CA ${token.address}`);
+  copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(token.address);say(`Copied ${token.address}`);}catch{say(`Copy manually: ${token.address}`);}});contract.append(copy);
+  const actions=el('td','market-actions',''),analyze=el('a','','Analyze ↗');analyze.href=`terminal.html?token=${token.address}&analyze=1`;analyze.setAttribute('aria-label',`Analyze ${token.symbol} at $1,000`);
+  const agent=el('a','agent-link','Agent');agent.href=`connect.html?token=${token.address}`;actions.append(analyze,agent);
+  row.append(observed,name,contract,el('td','token-liquidity',fmt.format(token.liquidityUsd)),actions);grid.append(row);rows.set(token.address,row);empty.hidden=true;
+ }
+ function reveal(){clearTimeout(rowTimer);if(paused||document.hidden||interacting)return;if(reduced.matches){queue.splice(0).forEach(add);return;}if(queue.length)rowTimer=setTimeout(()=>{add(queue.shift());reveal();},1000);}
+ function controls(){clearTimeout(cooldownTimer);refresh.disabled=!!controller||paused||Date.now()<nextFetch;if(!controller&&!paused&&Date.now()<nextFetch)cooldownTimer=setTimeout(controls,nextFetch-Date.now()+10);}
+ function expire(){if(expiresAt&&Date.now()>=expiresAt){clearTimeout(rowTimer);queue=[];rows.clear();grid.replaceChildren();status.textContent='Previous snapshot expired.';placeholder('Snapshot expired','Refresh the scanner or paste a CA below.');}}
+ async function load(){
+  if(controller||paused||document.hidden||interacting||Date.now()<nextFetch)return;
+  const active=new AbortController();controller=active;controls();const timeout=setTimeout(()=>active.abort(),12000);
+  status.classList.remove('error');status.textContent=rows.size?'Refreshing · keeping the previous snapshot visible':'Connecting to public markets...';
+  try{
+   const response=await fetch(API,{signal:active.signal});
+   if(!response.ok){nextFetch=Date.now()+(response.status===429?60000:5000);throw new Error(response.status===429?'Request limit reached. Retry in one minute.':'Market provider unavailable.');}
+   const data=await response.json(),stamp=Date.parse(data.observedAt);
+   if(!Array.isArray(data.tokens)||!Number.isFinite(stamp)||Date.now()-stamp>300000||stamp>Date.now()+60000)throw new Error('Invalid or expired snapshot.');
+   const tokens=data.tokens.filter(t=>t&&/^0x[a-fA-F0-9]{40}$/.test(t.address)&&typeof t.symbol==='string'&&typeof t.name==='string'&&Number.isFinite(t.liquidityUsd)&&t.liquidityUsd>0).slice(0,24);
+   nextFetch=Date.now()+30000;
+   if(interacting||paused||document.hidden){status.textContent='Previous snapshot retained while you inspect a row.';return;}
+   clearTimeout(rowTimer);queue=[];const incoming=new Set(tokens.map(t=>t.address));
+   for(const [address,row] of rows)if(!incoming.has(address)){row.remove();rows.delete(address);}
+   for(const token of tokens){const row=rows.get(token.address);if(row){row.querySelector('.market-time').textContent=data.observedAt.slice(11,19);row.querySelector('.token-liquidity').textContent=fmt.format(token.liquidityUsd);}else queue.push({token:{...token,symbol:token.symbol.slice(0,24),name:token.name.slice(0,80)},time:data.observedAt});}
+   // Useful initial view immediately; animate only the remaining new rows.
+   if(!rows.size)queue.splice(0,6).forEach(add);
+   expiresAt=stamp+300000;clearTimeout(expiryTimer);expiryTimer=setTimeout(expire,Math.max(0,expiresAt-Date.now()));
+   status.textContent=`${data.stale?'CACHED / STALE':'SNAPSHOT'} · ${tokens.length} tokens · ${data.observedAt.slice(11,19)} UTC`;status.classList.toggle('error',!!data.stale);
+   placeholder('No matching liquid pools','Paste a CA below or refresh the sample.');reveal();
+  }catch(error){
+   if(paused||document.hidden){status.textContent=paused?'Paused':'Request stopped while page was hidden';return;}
+   nextFetch=Math.max(nextFetch,Date.now()+5000);status.classList.add('error');status.textContent=`${error.name==='AbortError'?'Connection timed out.':error.message}${rows.size?' Previous snapshot shown — may be stale.':' Retry or use a CA below.'}`;
+   placeholder('Scanner temporarily offline','No invented tokens. Retry in a few seconds or paste a CA below.');
+  }finally{clearTimeout(timeout);controller=null;controls();}
+ }
+ function schedule(){clearTimeout(pollTimer);reveal();if(!paused&&!document.hidden){load();pollTimer=setTimeout(schedule,30000);}}
+ pause.addEventListener('click',()=>{paused=!paused;pause.textContent=paused?'Resume':'Pause';pause.setAttribute('aria-pressed',String(paused));if(paused){controller?.abort();status.textContent='Paused · displayed snapshot is not refreshing';}controls();schedule();});refresh.addEventListener('click',load);
+ grid.addEventListener('mouseenter',()=>{interacting=true;reveal();});grid.addEventListener('mouseleave',()=>{interacting=grid.contains(document.activeElement);reveal();});grid.addEventListener('focusin',()=>{interacting=true;reveal();});grid.addEventListener('focusout',e=>{if(!grid.contains(e.relatedTarget)){interacting=grid.matches(':hover');reveal();}});
+ section.querySelector('[data-scan-form]').addEventListener('submit',e=>{e.preventDefault();const ca=section.querySelector('#scanner-ca').value.trim();if(/^0x[a-fA-F0-9]{40}$/.test(ca))location.href=`terminal.html?token=${ca}&analyze=1`;});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)controller?.abort();expire();schedule();});reduced.addEventListener('change',reveal);schedule();
 }

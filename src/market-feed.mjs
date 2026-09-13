@@ -17,10 +17,11 @@ export function normalizeMarkets(pairs) {
 }
 export function createMarketFeed(fetchImpl = fetch, now = Date.now) {
   let cached, pending, retryAt = 0;
+  const stale = () => cached && now() - cached.fetchedAt < 300_000 ? { ...cached.body, stale: true } : null;
   return async function readMarkets() {
     if (cached && now() - cached.fetchedAt < 30_000) return cached.body;
     if (pending) return pending;
-    if (now() < retryAt) throw new Error('Provider cooldown');
+    if (now() < retryAt) { if (stale()) return stale(); throw new Error('Provider cooldown'); }
     pending = (async () => {
       try {
         const response = await fetchImpl(MARKET_SOURCE, { signal: AbortSignal.timeout(8000), cf: { cacheTtl: 30, cacheEverything: true } });
@@ -29,7 +30,7 @@ export function createMarketFeed(fetchImpl = fetch, now = Date.now) {
         const body = { source: 'DexScreener search: robinhood WETH', scope: 'Sample of matching Robinhood pools. Not all tokens, new launches or a safety ranking.', observedAt: new Date(now()).toISOString(), refreshSeconds: 30, tokens: normalizeMarkets(raw?.pairs) };
         cached = { body, fetchedAt: now() }; retryAt = 0;
         return body;
-      } catch (error) { retryAt = now() + 15_000; throw error; }
+      } catch (error) { retryAt = now() + 15_000; if (stale()) return stale(); throw error; }
       finally { pending = null; }
     })();
     return pending;

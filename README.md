@@ -11,9 +11,9 @@
 
 **Check liquidity before you trust the number.**
 
-TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain — not a made-up executable quote.
+TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain вЂ” not a made-up executable quote.
 
-[Open the terminal](https://trenchmcp.lol/terminal.html) · [Connect your agent](#connect-your-agent) · [Read the assumptions](docs/MODEL.md)
+[Open the terminal](https://trenchmcp.lol/terminal.html) В· [Connect your agent](#connect-your-agent) В· [Read the assumptions](docs/MODEL.md)
 
 [![CI](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/Node-22%2B-8bf7a3)](https://nodejs.org/)
@@ -21,11 +21,11 @@ TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, p
 
 ## Public site
 
-**[Open TRENCH → trenchmcp.lol](https://trenchmcp.lol/)**
+**[Open TRENCH в†’ trenchmcp.lol](https://trenchmcp.lol/)**
 
 Use the [browser terminal](https://trenchmcp.lol/terminal.html) without installing anything. Paste a Robinhood Chain token contract, enter a USD position size, and inspect public pool data alongside a transparent exit-pressure model.
 
-Compare four independent position-size scenarios — **10%, 25%, 50% and 100%** — then export the observation as **JSON or Markdown**. Source references, observation time and model assumptions stay beside the result.
+Compare four independent position-size scenarios вЂ” **10%, 25%, 50% and 100%** вЂ” then export the observation as **JSON or Markdown**. Source references, observation time and model assumptions stay beside the result.
 
 Want to use TRENCH from an AI client? The [agent connection guide](https://trenchmcp.lol/connect.html) explains how to connect to the hosted MCP endpoint or run the server locally.
 
@@ -62,14 +62,14 @@ It does **not** trade. It does **not** accept private keys. It does **not** pret
 
 ```text
 user question
-     │
-     ▼
-AI agent ──MCP/HTTP or stdio──► TRENCH
-                         ├── Robinhood Chain RPC: chain + block
-                         ├── DexScreener: pools + liquidity + volume
-                         └── SLIP engine: size-aware pressure model
-                                      │
-                                      ▼
+     в”‚
+     в–ј
+AI agent в”Ђв”ЂMCP/HTTP or stdioв”Ђв”Ђв–є TRENCH
+                         в”њв”Ђв”Ђ Robinhood Chain RPC: chain + block
+                         в”њв”Ђв”Ђ DexScreener: pools + liquidity + volume
+                         в””в”Ђв”Ђ SLIP engine: size-aware pressure model
+                                      в”‚
+                                      в–ј
                            evidence + grade + limits
 ```
 
@@ -92,7 +92,7 @@ npm start
 
 ## Connect your agent
 
-### Remote HTTPS — no local installation
+### Remote HTTPS вЂ” no local installation
 
 Add this URL to a client supporting MCP Streamable HTTP:
 
@@ -182,8 +182,8 @@ TRENCH uses the highest-liquidity observed pool and approximates quote-side dept
 
 ```text
 quote_depth = pool_liquidity / 2
-after_fee   = size × (1 - fee_rate)
-receive     = quote_depth × after_fee / (quote_depth + after_fee)
+after_fee   = size Г— (1 - fee_rate)
+receive     = quote_depth Г— after_fee / (quote_depth + after_fee)
 impact      = 1 - receive / after_fee
 ```
 
@@ -282,7 +282,7 @@ The session console supports `help`, `demo`, `analyze <token> <USD size>` and `c
 
 The homepage reads `GET /api/markets` from the hosted worker. It samples DexScreener search results for `robinhood WETH`, filters to Robinhood Chain EVM tokens with positive reported pool liquidity, deduplicates by CA using the largest observed pool, and returns up to 24 tokens. This is not a complete launch index, a safety ranking or a trade feed.
 
-Cards reveal at one per second for readability; the browser refreshes the sample every 30 seconds. The server caches successful samples for 30 seconds, coalesces concurrent fetches, limits upstream requests to eight seconds and applies a 15-second failure cooldown. Per-IP service rate limits still apply. Errors are explicit; no synthetic tokens are substituted. Existing cards are marked as potentially stale on a refresh failure.
+The compact scanner shows six rows immediately, then reveals remaining rows at one per second; snapshots refresh every 30 seconds without clearing existing rows. The server caches successful samples for 30 seconds, coalesces concurrent fetches, limits upstream requests to eight seconds and applies a 15-second failure cooldown. Per-IP service rate limits still apply. Errors are explicit; no synthetic tokens are substituted. On an upstream failure, a previously fetched server snapshot may be returned for up to five minutes with `stale: true` and its original timestamp. The browser marks retained rows as stale and removes them when they expire. Cold-start failures show a compact retry state and a manual CA input instead of an empty grid.
 
 **Analyze $1,000** opens the browser terminal and runs the existing read-only pressure model for the selected CA. **Ask your agent** opens MCP setup with an address-specific prompt to copy into your connected AI client. There is no embedded LLM, trading permission or automatic purchase.
 
