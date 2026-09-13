@@ -6,6 +6,9 @@
 
 # TRENCH MCP
 
+**Live:** [trenchmcp.lol](https://trenchmcp.lol/)  
+**Created by:** [@fluixoo](https://x.com/fluixoo)
+
 **Check liquidity before you trust the number.**
 
 TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain — not a made-up executable quote.
@@ -15,6 +18,20 @@ TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, p
 [![CI](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/Node-22%2B-8bf7a3)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-9aa4a0)](LICENSE)
+
+## Public site
+
+**[Open TRENCH → trenchmcp.lol](https://trenchmcp.lol/)**
+
+Use the [browser terminal](https://trenchmcp.lol/terminal.html) without installing anything. Paste a Robinhood Chain token contract, enter a USD position size, and inspect public pool data alongside a transparent exit-pressure model.
+
+Compare four independent position-size scenarios — **10%, 25%, 50% and 100%** — then export the observation as **JSON or Markdown**. Source references, observation time and model assumptions stay beside the result.
+
+Want to use TRENCH from an AI client? The [agent connection guide](https://trenchmcp.lol/connect.html) explains how to connect to the hosted MCP endpoint or run the server locally.
+
+No wallet connection, private keys, signatures or transactions. The synthetic demo is separately labeled; a failed live request is not silently replaced with demo data.
+
+> Results are model estimates, not executable sell quotes or token-safety verdicts. Pool data and the RPC block are separate observations, not an atomic block-pinned snapshot.
 
 ## Understand it in 20 seconds
 
