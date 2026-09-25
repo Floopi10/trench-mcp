@@ -10,7 +10,7 @@ if (hero && notes) {
   rain.setAttribute('aria-hidden', 'true');
   for (let i = 0; i < 10; i++) {
     const drop = document.createElement('img');
-    drop.src = 'assets/trench-mascot.png';
+    drop.src = 'assets/trench-avatar-solana.png';
     drop.alt = '';
     drop.width = 42;
     drop.height = 42;
