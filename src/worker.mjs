@@ -20,6 +20,7 @@ export function createWorker(mcp = handler, analyze = analyzeExit, markets = rea
   headers.set('Access-Control-Expose-Headers', 'MCP-Protocol-Version, MCP-Session-Id');
   const reply = (message, status) => new Response(message, { status, headers });
   if (request.method === 'OPTIONS') return reply(null, 204);
+  if (!env.API_KEY || request.headers.get('X-API-Key') !== env.API_KEY) return reply('Unauthorized', 401);
   if (!env.MCP_RATE_LIMITER) return reply('Service temporarily unavailable', 503);
   const { success } = await env.MCP_RATE_LIMITER.limit({ key: request.headers.get('CF-Connecting-IP') || 'unknown' });
   if (!success) { headers.set('Retry-After', '60'); return reply('Rate limit exceeded', 429); }
