@@ -8,7 +8,7 @@ if(section){
  function el(tag,cls,text){const e=document.createElement(tag);e.className=cls;e.textContent=text;return e;}
  function say(text){feedback.hidden=false;feedback.textContent=text;}
  function selectToken(ca){
-  if(!/^0x[a-fA-F0-9]{40}$/.test(ca))return;
+  if(!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(ca))return;
   if(document.getElementById('analysis-form'))document.dispatchEvent(new CustomEvent('trench:select-token',{detail:{token:ca}}));
   else location.href=`terminal.html?token=${ca}&analyze=1`;
  }
@@ -60,7 +60,7 @@ if(section){
    const data=await readBrowserMarkets(active.signal),stamp=Date.parse(data.observedAt);
    if(active.signal.aborted||paused||document.hidden)return;
    if(!Array.isArray(data.tokens)||!Number.isFinite(stamp)||Date.now()-stamp>300000||stamp>Date.now()+60000)throw new Error('Invalid or expired snapshot.');
-   const tokens=[...new Map(data.tokens.filter(t=>t&&/^0x[a-fA-F0-9]{40}$/.test(t.address)&&typeof t.symbol==='string'&&typeof t.name==='string'&&Number.isFinite(t.liquidityUsd)&&t.liquidityUsd>0).map(t=>[t.address.toLowerCase(),{...t,address:t.address.toLowerCase(),symbol:t.symbol.slice(0,24),name:t.name.slice(0,80)}])).values()].slice(0,24);
+   const tokens=[...new Map(data.tokens.filter(t=>t&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(t.address)&&typeof t.symbol==='string'&&typeof t.name==='string'&&Number.isFinite(t.liquidityUsd)&&t.liquidityUsd>0).map(t=>[t.address,{...t,address:t.address,symbol:t.symbol.slice(0,24),name:t.name.slice(0,80)}])).values()].slice(0,24);
    failures=0;nextFetch=Date.now()+30000;
    expiresAt=stamp+300000;clearTimeout(expiryTimer);expiryTimer=setTimeout(expire,Math.max(0,expiresAt-Date.now()));
    status.textContent=`${data.stale?'CACHED / STALE':data.source} · ${tokens.length} tokens · ${data.observedAt.slice(11,19)} UTC`;status.classList.toggle('error',!!data.stale);

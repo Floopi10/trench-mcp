@@ -2,7 +2,7 @@
 
 ## System objective
 
-TRENCH gives an MCP host a small, auditable tool surface for answering size-aware market questions on Robinhood Chain. The design separates transport, orchestration, external observations and deterministic modeling.
+TRENCH gives an MCP host a small, auditable tool surface for answering size-aware market questions on Solana. The design separates transport, orchestration, external observations and deterministic modeling.
 
 ## Components
 

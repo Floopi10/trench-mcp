@@ -55,13 +55,13 @@ export function createWorker(mcp = handler, analyze = analyzeExit, markets = rea
   } catch { return reply('Invalid JSON request', 400); }
   if (url.pathname === '/api/analyze') {
    headers.set('Content-Type', 'application/json');
-   if (!parsedBody || typeof parsedBody !== 'object' || Object.keys(parsedBody).some(key => !['token','sizeUsd'].includes(key)) || typeof parsedBody.token !== 'string' || typeof parsedBody.sizeUsd !== 'number') return reply(JSON.stringify({error:'Provide only token (EVM address) and sizeUsd (number).'}),400);
+   if (!parsedBody || typeof parsedBody !== 'object' || Object.keys(parsedBody).some(key => !['token','sizeUsd'].includes(key)) || typeof parsedBody.token !== 'string' || typeof parsedBody.sizeUsd !== 'number') return reply(JSON.stringify({error:'Provide only token (Solana address) and sizeUsd (number).'}),400);
    try { validateInput(parsedBody.token, parsedBody.sizeUsd); }
    catch { return reply(JSON.stringify({error:'Invalid token address or USD size. Maximum size is $10,000,000.'}),400); }
    try { return reply(JSON.stringify(await analyze({token:parsedBody.token,sizeUsd:parsedBody.sizeUsd})),200); }
    catch (error) {
-    const noPool = error instanceof Error && error.message === 'No liquid Robinhood Chain pool was found for this token.';
-    return reply(JSON.stringify({error:noPool?'No liquid Robinhood Chain pool found for this token. Check the address and chain.':'Public data provider unavailable or incomplete. No estimate generated; please retry.'}),noPool?404:502);
+    const noPool = error instanceof Error && error.message === 'No liquid Solana pool was found for this token.';
+    return reply(JSON.stringify({error:noPool?'No liquid Solana pool found for this token. Check the address and cluster.':'Public data provider unavailable or incomplete. No estimate generated; please retry.'}),noPool?404:502);
    }
   }
   try {

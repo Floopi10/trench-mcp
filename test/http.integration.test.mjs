@@ -9,10 +9,10 @@ const env = { MCP_RATE_LIMITER: { limit: async () => ({success:true}) }, ASSETS:
 const endpoint = 'https://trench-mcp.mytodofloopi.workers.dev/mcp';
 const request = (body, extra={}) => new Request(endpoint, {method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream',...extra},body});
 test('HTTP agent discovers five tools and calls chain_health', async () => {
- const handler = createMcpHandler(() => buildServer({chainHealth:async()=>({ok:true,chainId:46630,blockNumber:12345,source:'test fixture'})}),{responseMode:'json'});
+ const handler = createMcpHandler(() => buildServer({chainHealth:async()=>({ok:true,chain:'Solana',cluster:'mainnet-beta',slot:12345,source:'test fixture'})}),{responseMode:'json'});
  const worker=createWorker(handler),client=new Client({name:'http-test',version:'1.0'});
  const transport=new StreamableHTTPClientTransport(new URL(endpoint),{fetch:(input,init)=>worker.fetch(new Request(input,init),env)});
- try {await client.connect(transport); const listed=await client.listTools();assert.equal(listed.tools.length,5);const result=await client.callTool({name:'chain_health',arguments:{}});assert.equal(result.structuredContent.blockNumber,12345);assert.equal(result.isError,undefined);}
+ try {await client.connect(transport); const listed=await client.listTools();assert.equal(listed.tools.length,5);const result=await client.callTool({name:'chain_health',arguments:{}});assert.equal(result.structuredContent.slot,12345);assert.equal(result.isError,undefined);}
  finally {await client.close();await handler.close();}
 });
 test('HTTP endpoint rejects untrusted origins, oversized bodies, invalid JSON and batches',async()=>{

@@ -1,60 +1,11 @@
-TRENCH MCP 0.1.0 — verification ledger
-Observed: 2026-09-11
+# Verification ledger
 
-COMMAND: npm run check
-EXIT: 0
-STDOUT (summary):
-# tests 4
-# pass 4
-# fail 0
+## Solana migration
 
-COMMAND: MCP client -> listTools over stdio
-EXIT: 0
-OBSERVED TOOLS:
-chain_health
-compare_exit_sizes
-explain_exit_signal
-inspect_token
-simulate_exit
+Earlier chain-specific observations are superseded. This repository now targets **Solana mainnet-beta** and validates public base58 token addresses, DexScreener's `solana` market surface, and the configured Solana JSON-RPC `getHealth` + `getSlot` calls.
 
-COMMAND: MCP client -> callTool(chain_health, {}) over stdio
-EXIT: 0
-STDOUT:
-{"ok":true,"chain":"Robinhood Chain","chainId":4663,"blockNumber":60280545,"rpcUrl":"https://rpc.mainnet.chain.robinhood.com","latencyMs":857,"observedAt":"2026-09-11T13:08:15.945Z"}
+Run `npm run check` after any change. Live RPC and provider values are intentionally not stored here because they drift by request.
 
-COMMAND: npm pack --dry-run
-EXIT: 0
-OBSERVED PACKAGE:
-trench-mcp-0.1.0.tgz
-package size: 7.4 kB
-unpacked size: 20.7 kB
-total files: 10
+## Limits
 
-COMMAND: gh run watch 34602561339 --repo Floopi10/trench-mcp --exit-status
-EXIT: 0
-STDOUT:
-Run CI (34602561339) has already completed with 'success'
-
-BOUNDARIES:
-- No wallet connection, private key, signing, swap, custody, or autonomous trading.
-- Exit receive/impact values are constant-product pressure proxies, not executable venue quotes.
-- Live market data may lag or omit pools; exact execution must be verified at the venue.
-
-SITE AND BRAND UPDATE:
-- README mascot asset: assets/trench-mascot.png
-- Website mascot asset: docs/assets/trench-mascot.png
-- Mascot dimensions/mode: 1254x1254 RGBA
-- Mascot SHA256: 2395A65F0F0B4A1A67310D99B4BB14B35492BA5329AEA611218364FE5633C86C
-- Local page title observed: TRENCH MCP
-- Interactive elements observed: 2 sliders, 2 copy controls, 4 navigation links
-- Responsive desktop hero visually inspected in an in-app Chromium browser.
-- Initial Pages command reported that the project did not exist (exit 1).
-- Corrected deployment used the generated Workers static-assets project.
-- Observed live URL: https://trench-mcp.mytodofloopi.workers.dev
-- Observed Workers version: e9e1f3a9-402b-4a1b-9553-b78145b29f92
-
-READOUT OVERFLOW FIX:
-- Screenshot showed the radar status sublabel clipped at the right edge.
-- Radar and grid children now explicitly shrink within their responsive column.
-- Readout has a bounded width, safe right inset, no-wrap labels, and a compact mobile rule.
-- Long install commands now wrap instead of widening the page.
+A passing local suite verifies code paths and fixtures. It does not prove provider availability, liquidity, transaction execution, token safety, or financial outcomes.

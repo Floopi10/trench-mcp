@@ -1,9 +1,9 @@
 {
   "name": "trench-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "type": "module",
-  "description": "Read-only Robinhood Chain market intelligence tools for AI agents.",
+  "description": "Read-only Solana market intelligence tools for AI agents.",
   "bin": {
     "trench-mcp": "bin/trench-mcp.mjs"
   },

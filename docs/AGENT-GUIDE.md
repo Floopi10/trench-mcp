@@ -11,7 +11,7 @@
 ## Recommended host prompt
 
 ```text
-Use TRENCH tools for Robinhood Chain market observations. Always state the
+Use TRENCH tools for Solana market observations. Always state the
 observation time, block, position size, selected pool, liquidity and grade reason.
 Call modeled impact a pressure proxy, never an executable quote. Do not provide
 financial advice or claim a trade will succeed. If no pool is found, say so.

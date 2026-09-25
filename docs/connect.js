@@ -1,6 +1,6 @@
 import './app.js';
 const selectedToken = new URLSearchParams(location.search).get('token');
-if (selectedToken && /^0x[a-fA-F0-9]{40}$/.test(selectedToken)) {
+if (selectedToken && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(selectedToken)) {
  const section = document.createElement('section');
  const heading = document.createElement('h2'); heading.textContent = 'Selected token / ask your connected agent';
  const prompt = document.createElement('pre');

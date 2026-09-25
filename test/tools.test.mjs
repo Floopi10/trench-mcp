@@ -4,12 +4,12 @@ import { compareSizesFromReport, createToolLogic, explainReport } from "../src/t
 
 const fixture = {
   observedAt: "2026-09-11T00:00:00.000Z",
-  chain: { name: "Robinhood Chain", chainId: 4663, blockNumber: 42 },
-  token: { address: `0x${"a".repeat(40)}`, name: "Fixture", symbol: "FIX", priceUsd: 1 },
+  chain: { name: "Solana", cluster: 'mainnet-beta', slot: 42 },
+  token: { address: 'So11111111111111111111111111111111111111112', name: "Fixture", symbol: "FIX", priceUsd: 1 },
   market: {
     poolsFound: 1,
     aggregateLiquidityUsd: 100_000,
-    primaryPool: { pairAddress: `0x${"b".repeat(40)}`, liquidityUsd: 100_000, volume24hUsd: 20_000, priceUsd: 1 }
+    primaryPool: { pairAddress: '11111111111111111111111111111111', liquidityUsd: 100_000, volume24hUsd: 20_000, priceUsd: 1 }
   },
   grade: "DEEP",
   reason: "Position stays below the configured depth wall.",

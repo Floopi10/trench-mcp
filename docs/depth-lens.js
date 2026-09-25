@@ -1,7 +1,7 @@
 const lens = document.querySelector('[data-depth-lens]');
 if (lens) {
  const content = {
-  observe: ['inspect_token / chain_health', 'Start with public evidence.', 'Read observed pool liquidity and volume, plus a separate Robinhood RPC block observation. No wallet connection.'],
+  observe: ['inspect_token / chain_health', 'Start with public evidence.', 'Read observed pool liquidity and volume, plus a separate Solana RPC slot observation. No wallet connection.'],
   model: ['simulate_exit / compare_exit_sizes', 'Your size changes the pressure.', 'The code applies a constant-product proxy to estimated quote depth, with a disclosed 1% fee. It is not an executable sell quote.'],
   explain: ['explain_exit_signal / MCP', 'Give your agent the evidence.', 'Structured results include a grade, reasons and model limits. Your MCP-compatible agent can explain them; it does not rewrite the formula.']
  };

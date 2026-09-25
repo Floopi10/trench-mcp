@@ -1,4 +1,4 @@
-![TRENCH on Robinhood Chain - market tools for AI agents](docs/assets/trench-banner.png)
+![TRENCH on Solana - market tools for AI agents](docs/assets/trench-banner.png)
 
 <p align="center">
   <img src="docs/assets/trench-avatar.png" alt="TRENCH mascot - terminal-green pixel axolotl" width="180">
@@ -11,9 +11,9 @@
 
 **Check liquidity before you trust the number.**
 
-TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain вЂ” not a made-up executable quote.
+TRENCH gives an AI agent observed Solana pool data and a transparent, position-size-aware pressure model. The agent gets evidence to explain — not a made-up executable quote.
 
-[Open the terminal](https://trenchmcp.lol/terminal.html) В· [Connect your agent](#connect-your-agent) В· [Read the assumptions](docs/MODEL.md)
+[Open the terminal](https://trenchmcp.lol/terminal.html) · [Connect your agent](#connect-your-agent) · [Read the assumptions](docs/MODEL.md)
 
 [![CI](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Floopi10/trench-mcp/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/Node-22%2B-8bf7a3)](https://nodejs.org/)
@@ -21,17 +21,17 @@ TRENCH gives an AI agent observed Robinhood Chain pool data and a transparent, p
 
 ## Public site
 
-**[Open TRENCH в†’ trenchmcp.lol](https://trenchmcp.lol/)**
+**[Open TRENCH → trenchmcp.lol](https://trenchmcp.lol/)**
 
-Use the [browser terminal](https://trenchmcp.lol/terminal.html) without installing anything. Paste a Robinhood Chain token contract, enter a USD position size, and inspect public pool data alongside a transparent exit-pressure model.
+Use the [browser terminal](https://trenchmcp.lol/terminal.html) without installing anything. Paste a Solana token contract, enter a USD position size, and inspect public pool data alongside a transparent exit-pressure model.
 
-Compare four independent position-size scenarios вЂ” **10%, 25%, 50% and 100%** вЂ” then export the observation as **JSON or Markdown**. Source references, observation time and model assumptions stay beside the result.
+Compare four independent position-size scenarios — **10%, 25%, 50% and 100%** — then export the observation as **JSON or Markdown**. Source references, observation time and model assumptions stay beside the result.
 
 Want to use TRENCH from an AI client? The [agent connection guide](https://trenchmcp.lol/connect.html) explains how to connect to the hosted MCP endpoint or run the server locally.
 
 No wallet connection, private keys, signatures or transactions. The synthetic demo is separately labeled; a failed live request is not silently replaced with demo data.
 
-> Results are model estimates, not executable sell quotes or token-safety verdicts. Pool data and the RPC block are separate observations, not an atomic block-pinned snapshot.
+> Results are model estimates, not executable sell quotes or token-safety verdicts. Pool data and the RPC slot are separate observations, not an atomic slot-pinned snapshot.
 
 ## Understand it in 20 seconds
 
@@ -39,10 +39,10 @@ No wallet connection, private keys, signatures or transactions. The synthetic de
 | --- | --- |
 | What does it do? | Reads token pools and models how a USD position size changes estimated exit pressure. |
 | Where is the AI? | Your MCP-compatible AI client calls the tools and interprets their structured results. The pressure calculation is deterministic. |
-| Can I try it immediately? | Yes. Paste a Robinhood Chain token address and a USD position size, or load the separately labeled synthetic demo. No account or wallet connection. |
-| Where does live data happen? | The hosted server reads DexScreener pools and Robinhood Chain RPC for both the browser terminal and MCP clients. Demo mode uses manual inputs. |
+| Can I try it immediately? | Yes. Paste a Solana token address and a USD position size, or load the separately labeled synthetic demo. No account or wallet connection. |
+| Where does live data happen? | The hosted server reads DexScreener pools and Solana RPC for both the browser terminal and MCP clients. Demo mode uses manual inputs. |
 | Does it execute trades? | No signing, approvals, swaps or custody. It does not look up your wallet balance. |
-| Is the result a quote? | No. It is a disclosed constant-product proxy, not a complete Uniswap v4 execution simulation. |
+| Is the result a quote? | No. It is a disclosed constant-product proxy, not a complete Solana router execution simulation. |
 
 ![TRENCH research desk displaying a clearly labeled synthetic example](docs/assets/terminal-workbench.png)
 
@@ -52,24 +52,24 @@ AI agents can summarize token pages, read contracts and repeat social posts. Tha
 
 > **If this position had to exit now, what does the visible market structure suggest?**
 
-Raw liquidity alone is not enough. A `$50K` position and a `$500` position do not face the same market. TRENCH collects the token, position size, observed primary pool, RPC block and an explicit pressure model in one structured MCP result. Pool data and RPC block reads are separate observations, not an atomic block-pinned snapshot.
+Raw liquidity alone is not enough. A `$50K` position and a `$500` position do not face the same market. TRENCH collects the token, position size, observed primary pool, RPC slot and an explicit pressure model in one structured MCP result. Pool data and RPC slot reads are separate observations, not an atomic slot-pinned snapshot.
 
 ## What TRENCH is
 
-TRENCH is a real, local-first MCP server for Claude, Codex and any compatible client. It exposes five read-only tools backed by current Robinhood Chain RPC and pool observations.
+TRENCH is a real, local-first MCP server for Claude, Codex and any compatible client. It exposes five read-only tools backed by current Solana RPC and pool observations.
 
 It does **not** trade. It does **not** accept private keys. It does **not** pretend a constant-product model is an executable quote.
 
 ```text
 user question
-     в”‚
-     в–ј
-AI agent в”Ђв”ЂMCP/HTTP or stdioв”Ђв”Ђв–є TRENCH
-                         в”њв”Ђв”Ђ Robinhood Chain RPC: chain + block
-                         в”њв”Ђв”Ђ DexScreener: pools + liquidity + volume
-                         в””в”Ђв”Ђ SLIP engine: size-aware pressure model
-                                      в”‚
-                                      в–ј
+     │
+     ▼
+AI agent ──MCP/HTTP or stdio──▶ TRENCH
+                         ├── Solana RPC: chain + slot
+                         ├── DexScreener: pools + liquidity + volume
+                         └── SLIP engine: size-aware pressure model
+                                      │
+                                      ▼
                            evidence + grade + limits
 ```
 
@@ -92,7 +92,7 @@ npm start
 
 ## Connect your agent
 
-### Remote HTTPS вЂ” no local installation
+### Remote HTTPS — no local installation
 
 Add this URL to a client supporting MCP Streamable HTTP:
 
@@ -136,10 +136,10 @@ Windows example:
 
 ### `inspect_token`
 
-Reads the strongest visible Robinhood Chain pool for a token and returns price, liquidity, 24-hour volume, activity, pool count and a small-position pressure grade.
+Reads the strongest visible Solana pool for a token and returns price, liquidity, 24-hour volume, activity, pool count and a small-position pressure grade.
 
 ```json
-{ "token": "0x0000000000000000000000000000000000000000" }
+{ "token": "So11111111111111111111111111111111111111112" }
 ```
 
 ### `simulate_exit`
@@ -148,7 +148,7 @@ Models a specific USD exit size against estimated quote-side depth. The result i
 
 ```json
 {
-  "token": "0x0000000000000000000000000000000000000000",
+  "token": "So11111111111111111111111111111111111111112",
   "sizeUsd": 2500
 }
 ```
@@ -159,14 +159,14 @@ Compares up to eight position sizes against the **same market observation**, pre
 
 ```json
 {
-  "token": "0x0000000000000000000000000000000000000000",
+  "token": "So11111111111111111111111111111111111111112",
   "sizesUsd": [100, 500, 2500, 10000]
 }
 ```
 
 ### `chain_health`
 
-Returns chain ID, latest block, public RPC URL and observed round-trip latency.
+Returns RPC health and latest slot, public RPC URL and observed round-trip latency.
 
 ```json
 {}
@@ -201,7 +201,7 @@ These are transparent product rules, not predictions. Read [MODEL.md](docs/MODEL
 
 TRENCH returns facts and boundaries together. A good agent should:
 
-1. State the observation time and available RPC block; do not imply the pool was read at that exact block.
+1. State the observation time and available RPC slot; do not imply the pool was read at that exact block.
 2. Name the selected pool and visible liquidity.
 3. Tie the grade to the requested position size.
 4. Label modeled impact as a proxy.
@@ -212,7 +212,7 @@ A bad agent hides timestamps, calls the proxy guaranteed output, or converts a g
 ## Security boundary
 
 - Every MCP capability is annotated read-only.
-- EVM addresses and USD sizes are strictly validated.
+- Solana base58 addresses and USD sizes are strictly validated.
 - Position size is capped at `$10,000,000`.
 - Network requests time out after eight seconds.
 - No secrets are accepted, logged or persisted.
@@ -272,7 +272,7 @@ The terminal has live token input and a separate synthetic demo. It shows pool l
 
 `POST https://trench-mcp.mytodofloopi.workers.dev/api/analyze`
 
-Body: `{"token":"<public EVM token address>","sizeUsd":5000}`. Only these two fields are accepted. Uses the same `analyzeExit` engine as MCP. Browser queries leave your device for the hosted server and public providers; never submit secrets.
+Body: `{"token":"<public Solana token address>","sizeUsd":5000}`. Only these two fields are accepted. Uses the same `analyzeExit` engine as MCP. Browser queries leave your device for the hosted server and public providers; never submit secrets.
 
 Origin validation, 16 KiB body limits and the shared 60 requests/minute per-IP best-effort limiter apply. Invalid input returns 400, no liquid pool 404, rate limiting 429, and provider failures 502. Errors never fall back silently to demo data. Results are snapshots, not an automatic live stream. Changing inputs invalidates the visible receipt; rerun to fetch new data.
 
@@ -280,7 +280,7 @@ The session console supports `help`, `demo`, `analyze <token> <USD size>` and `c
 
 ## Market discovery feed
 
-The homepage reads `GET /api/markets` from the hosted worker. It samples DexScreener search results for `robinhood WETH`, filters to Robinhood Chain EVM tokens with positive reported pool liquidity, deduplicates by CA using the largest observed pool, and returns up to 24 tokens. This is not a complete launch index, a safety ranking or a trade feed.
+The homepage reads `GET /api/markets` from the hosted worker. It samples DexScreener search results for `solana SOL`, filters to Solana base58 token addresses with positive reported pool liquidity, deduplicates by CA using the largest observed pool, and returns up to 24 tokens. This is not a complete launch index, a safety ranking or a trade feed.
 
 The compact scanner shows six rows immediately, then reveals remaining rows at one per second; snapshots refresh every 30 seconds without clearing existing rows. The server caches successful samples for 30 seconds, coalesces concurrent fetches, limits upstream requests to eight seconds and applies a 15-second failure cooldown. Per-IP service rate limits still apply. Errors are explicit; no synthetic tokens are substituted. On an upstream failure, a previously fetched server snapshot may be returned for up to five minutes with `stale: true` and its original timestamp. The browser marks retained rows as stale and removes them when they expire. Cold-start failures show a compact retry state and a manual CA input instead of an empty grid.
 
