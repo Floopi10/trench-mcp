@@ -1,7 +1,7 @@
-![TRENCH on Solana - market tools for AI agents](docs/assets/trench-banner.png)
+![TRENCH on Solana - market tools for AI agents](docs/assets/trench-banner-solana.png)
 
 <p align="center">
-  <img src="docs/assets/trench-avatar.png" alt="TRENCH mascot - terminal-green pixel axolotl" width="180">
+  <img src="docs/assets/trench-avatar-solana.png" alt="TRENCH Solana market operator mascot" width="180">
 </p>
 
 # TRENCH MCP
